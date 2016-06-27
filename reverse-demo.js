@@ -2,6 +2,7 @@ var info;
 var marker;
 var highlight;
 var map;
+var geocoder;
 
 // get things started
 setup();
@@ -20,18 +21,16 @@ function setup() {
  * Initialize map with Tangram tiles and proper attribution.
  */
 function initMap() {
-  map = L.map('map').setView([47.6091, -122.3177], 12);
+  map = L.Mapzen.map('map', {
+    center: [47.6091, -122.3177],
+    zoom: 12
+  });
 
-  Tangram.leafletLayer({
-    maxZoom: 18,
-    minZoom: 1,
-    // TODO: change to use our CDN
-    scene: 'https://raw.githubusercontent.com/tangrams/bubble-wrap/gh-pages/bubble-wrap.yaml',
-    attribution: '| <a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | <a href="http://www.openstreetmap.org/about" target="_blank">&copy; OSM contributors',
-  }).addTo(map);
+  map.attributionControl.addAttribution('<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | <a href="http://www.openstreetmap.org/about" target="_blank">&copy; OSM contributors | Mapzen data &copy; <a href="https://mapzen.com">Mapzen</a>');
 
-  map.attributionControl.addAttribution('Mapzen data &copy; <a href="https://mapzen.com">Mapzen</a>');
+  geocoder = L.Mapzen.geocoder('search-hQHkoy8').addTo(map);
 }
+
 
 /**
  * Add click event handling to perform the reverse geocoding and draw the results on the map.
