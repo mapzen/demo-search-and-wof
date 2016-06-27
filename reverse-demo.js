@@ -1,15 +1,11 @@
 var info;
 var marker;
 var highlight;
-var map;
-var geocoder;
 
-// get things started
+// Get things started
 setup();
 
-/**
- * Main setup function.
- */
+// Main setup to build the map
 function setup() {
   initMap();
   addClickHandler();
@@ -17,24 +13,22 @@ function setup() {
   updateInfo();
 }
 
-/**
- * Initialize map with Tangram tiles and proper attribution.
- */
+// Use Mapzen.js to build the map!
 function initMap() {
-  map = L.Mapzen.map('map', {
+  var map = L.Mapzen.map('map', {
     center: [47.6091, -122.3177],
     zoom: 12
   });
 
+  // change attribution for map
   map.attributionControl.addAttribution('<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | <a href="http://www.openstreetmap.org/about" target="_blank">&copy; OSM contributors | Mapzen data &copy; <a href="https://mapzen.com">Mapzen</a>');
 
-  geocoder = L.Mapzen.geocoder('search-hQHkoy8').addTo(map);
+  // fix placement and collapse
+  var geocoder = L.Mapzen.geocoder('search-hQHkoy8').addTo(map);
 }
 
 
-/**
- * Add click event handling to perform the reverse geocoding and draw the results on the map.
- */
+// Add click event handling to perform the reverse geocoding and draw the results on the map.
 function addClickHandler() {
   map.on('click', function (e) {
     var reverseResults = reverseGeocode(e.latlng.lat, e.latlng.lng);
@@ -60,11 +54,7 @@ function addClickHandler() {
   });
 }
 
-/**
- * Draw the POI marker (just geojson with points, no polygons)
- *
- * @param {object} place GeoJSON object
- */
+// Draw the POI marker (just geojson with points, no polygons)
 function dropMarker(place) {
   // if previous marker existed, remove it
   if (marker) {
@@ -79,23 +69,12 @@ function dropMarker(place) {
   }).addTo(map);
 }
 
-/**
- * Update the info box with given data.
- * Call with no parameters to reset the info box text.
- *
- * @param {string} [label]
- * @param {string} [parentType]
- * @param {string} [parentName]
- */
+//Update the info box with given data
 function updateInfo(label, parentType, parentName) {
   info.update(label, parentType, parentName);
 }
 
-/**
- * Draw the polygon(s) in the given geojson on the map.
- *
- * @param {object} geojson
- */
+// Draw the polygon(s) in the given geojson on the map.
 function addGeojson(geojson) {
   // if previous highlight was drawn, remove it
   if (highlight) {
@@ -118,12 +97,7 @@ function addGeojson(geojson) {
   }).addTo(map);
 }
 
-/**
- * Control in the upper right corner of the map
- *
- * NOTE: the info box might be too much for this demo. could
- * remove it and add parent info to the POI marker label.
- */
+// Control in the upper right corner of the map
 function addInfoBox() {
   // control that shows state info on hover
   info = L.control();
@@ -136,12 +110,12 @@ function addInfoBox() {
 
   info.update = function (name, parentType, parentName) {
     if (!name) {
-      this._div.innerHTML = '<h3>Go ahead and click anywhere on the map...</h3>';
+      this._div.innerHTML = '<h3>Click on a place on the map! </h3>';
       return;
     }
 
     this._div.innerHTML =
-      '<h3>Oh, that\'s in the ' + parentName + ' ' + parentType + '</h3>' +
+      '<h3>That\'s the ' + parentName + ' ' + parentType + '</h3>' +
       '<h4>' + name + '</h4>';
   };
 
