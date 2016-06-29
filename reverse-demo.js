@@ -1,6 +1,7 @@
 var info;
 var marker;
 var highlight;
+var map;
 
 // Get things started
 setup();
@@ -15,7 +16,7 @@ function setup() {
 
 // Use Mapzen.js to build the map!
 function initMap() {
-  var map = L.Mapzen.map('map', {
+  map = L.Mapzen.map('map', {
     center: [47.6091, -122.3177],
     zoom: 12
   });
