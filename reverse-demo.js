@@ -32,6 +32,7 @@ function initMap() {
 // Add click event handling to perform the reverse geocoding and draw the results on the map.
 function addClickHandler() {
   map.on('click', function (e) {
+    // between lines 36 - 52, get that into mapzen.js? and possibly line 55?
     var reverseResults = reverseGeocode(e.latlng.lat, e.latlng.lng);
     var place = reverseResults.features[0].properties;
 

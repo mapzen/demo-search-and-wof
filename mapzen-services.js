@@ -1,3 +1,5 @@
+// Move all of this in mapzen.js
+
 var wof_data_url = 'https://whosonfirst.mapzen.com/data/';
 var mapzen_search_url = 'https://search.mapzen.com/v1/';
 var search_api_key = '&api_key=search-hQHkoy8';
