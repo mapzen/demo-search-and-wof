@@ -16,16 +16,12 @@ function setup() {
 
 // Use Mapzen.js to build the map!
 function initMap() {
-  map = L.Mapzen.map('map', {
-    center: [47.6091, -122.3177],
-    zoom: 12
-  });
 
-  // change attribution for map
-  map.attributionControl.addAttribution('<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | <a href="http://www.openstreetmap.org/about" target="_blank">&copy; OSM contributors | Mapzen data &copy; <a href="https://mapzen.com">Mapzen</a>');
+  L.Mapzen.apiKey = 'search-hQHkoy8';
+  map = L.Mapzen.map('map');
+  map.setView([47.6091, -122.3177], 12);
 
-  // fix placement and collapse
-  var geocoder = L.Mapzen.geocoder('search-hQHkoy8').addTo(map);
+  L.Mapzen.geocoder().addTo(map);
 }
 
 
