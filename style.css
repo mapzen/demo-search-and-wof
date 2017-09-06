@@ -18,3 +18,13 @@ html,body{margin: 0; padding: 0}
     margin: 0 0 5px;
     color: #777;
 }
+.lang {
+    font: 18px/22px Arial, Helvetica, sans-serif;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    border: 0;
+    text-indent: 4px;
+}
+.no-overflow {
+    overflow: hidden;
+}

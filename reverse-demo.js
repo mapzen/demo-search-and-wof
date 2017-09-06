@@ -2,6 +2,7 @@ var info;
 var marker;
 var highlight;
 var map;
+var lang;
 
 // Get things started
 setup();
@@ -12,6 +13,7 @@ function setup() {
   addClickHandler();
   addInfoBox();
   updateInfo();
+  addLangSelector();
 }
 
 // Use Mapzen.js to build the map!
@@ -19,7 +21,7 @@ function initMap() {
 
   L.Mapzen.apiKey = 'search-hQHkoy8';
   map = L.Mapzen.map('map');
-  map.setView([47.6091, -122.3177], 12);
+  map.setView([37.539619, 127.009676], 12);
 
   L.Mapzen.geocoder().addTo(map);
 }
@@ -29,17 +31,31 @@ function initMap() {
 function addClickHandler() {
   map.on('click', function (e) {
     // between lines 36 - 52, get that into mapzen.js? and possibly line 55?
-    var reverseResults = reverseGeocode(e.latlng.lat, e.latlng.lng);
+    var reverseResults = reverseGeocode(e.latlng.lat, e.latlng.lng, lang._container.children["0"].value);
     var place = reverseResults.features[0].properties;
 
     dropMarker(reverseResults);
 
     // determine the gid of the lower available parent in the hierarchy
     // TODO: maybe we can find a simpler way to do this
-    var lowestParentGid = place.neighbourhood_gid || place.locality_gid || place.localadmin_gid || place.region_id;
+    var lowestParentGid = place.neighbourhood_gid
+      || place.locality_gid
+      || place.localadmin_gid
+      || place.county_id
+      || place.region_gid;
+
+    if (!lowestParentGid) {
+      console.error('no parent id found', place);
+      return;
+    }
 
     // use the gid to lookup full details of the parent in Mapzen Search
-    var parent = getPlaceDetails(lowestParentGid);
+    var parent = getPlaceDetails(lowestParentGid, lang._container.children["0"].value);
+
+    if (!parent) {
+      console.error('parent record not found');
+      return;
+    }
 
     // use the source_id of the full parent object to lookup the full WOF record full of geometry goodness
     var parentWOF = getWOFRecord(parent.properties.source_id);
@@ -49,6 +65,7 @@ function addClickHandler() {
 
     // update the info box with what was selected
     updateInfo(place.label, parentWOF.properties['wof:placetype'], parentWOF.properties['wof:name']);
+
   });
 }
 
@@ -86,11 +103,6 @@ function addGeojson(geojson) {
         color: 'green',
         opacity: '0.7'
       };
-    },
-    onEachFeature: function (feature, layer) {
-      // need to override the click event with nothing to allow user
-      // to click inside the area to geocode a new point
-      layer.on('click');
     }
   }).addTo(map);
 }
@@ -118,4 +130,28 @@ function addInfoBox() {
   };
 
   info.addTo(map);
+}
+
+// Control in the upper right corner of the map
+function addLangSelector() {
+  lang = L.control({position: 'topleft'});
+  lang.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'lang');
+    div.classList = 'leaflet-pelias-control leaflet-bar no-overflow';
+    div.innerHTML =
+      `<select class="leaflet-pelias-control lang">` +
+        `<option>ko</option>` +
+        `<option>en</option>` +
+      `</select>`;
+
+    L.DomEvent.on(div, 'click', L.DomEvent.stopPropagation);
+
+    L.DomEvent.on(div, 'change', function (ev) {
+      console.log('selected', lang, ev.target.selectedIndex);
+    });
+
+    return div;
+  };
+
+  lang.addTo(map);
 }

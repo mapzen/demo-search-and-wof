@@ -5,8 +5,8 @@ var mapzen_search_url = 'https://search.mapzen.com/v1/';
 var search_api_key = '&api_key=search-hQHkoy8';
 
 //Reverse geocode to lookup the address or venue at a given point.
-function reverseGeocode(lat, lng) {
-  var url = mapzen_search_url + 'reverse?size=1&point.lat=' + lat + '&point.lon=' + lng + search_api_key;
+function reverseGeocode(lat, lng, language) {
+  var url = mapzen_search_url + 'reverse?lang=' + language + '&size=1&point.lat=' + lat + '&point.lon=' + lng + search_api_key;
   return httpGetSync(url);
 }
 
@@ -14,8 +14,8 @@ function reverseGeocode(lat, lng) {
  * Important to note that these gids should be coming directly from
  * Mapzen Search results, and should never be constructed manually.
  */
-function getPlaceDetails(gid) {
-  var url = mapzen_search_url + 'place?ids=' + gid + search_api_key;
+function getPlaceDetails(gid, language) {
+  var url = mapzen_search_url + 'place?lang=' + language + '&ids=' + gid + search_api_key;
   return httpGetSync(url).features[0];
 }
 
@@ -31,5 +31,10 @@ function httpGetSync(url) {
   var xhttp = new XMLHttpRequest();
   xhttp.open("GET", url, false);
   xhttp.send();
-  return JSON.parse(xhttp.responseText);
+  console.log(xhttp.status);
+  if (xhttp.status === 200) {
+    return JSON.parse(xhttp.responseText);
+  }
+
+  return false;
 }
